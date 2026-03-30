@@ -39,19 +39,41 @@ function App() {
 
       {/* Main Grid Placeholder */}
       <main>
-        <div className="flex flex-col items-center justify-center p-16 border border-dashed border-[var(--border)] rounded-2xl">
+        <div className="flex flex-col items-center justify-center p-16 border border-[var(--border)] rounded-2xl">
           <Loader2 
             size={40} 
             className="text-[var(--primary)] mb-4 animate-spin"
           />
 
-          <h2 className="mb-2 text-xl font-medium">
-            Start Building Your Grid!
-          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+    
+          {/* Single Product Card */}
+          <div className="bg-white rounded-2xl border border-[var(--border)] overflow-hidden hover:shadow-md transition">
+            
+            {/* Image */}
+            <div className="bg-gray-100 flex items-center justify-center h-48">
+              <img
+                src="https://picsum.photos/seed/1/400/300"
+                alt="Product"
+                className="object-cover h-full"
+              />
+            </div>
 
-          <p className="text-[var(--text-muted)] text-center max-w-[500px]">
-            Use <code>src/services/api.ts</code> to fetch the products. Remember to build pagination and handle the network errors that the API frequently throws!
-          </p>
+            {/* Content */}
+            <div className="p-4">
+              <p className="text-sm text-gray-500 mb-1">Fabrilife</p>
+
+              <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 mb-2">
+                Fabrilife Mens Premium Designer Edition T Shirt with Unique Print and Superior Comfort
+              </h3>
+
+              <p className="text-lg font-bold text-[var(--primary)]">
+                ৳ 2,500
+              </p>
+            </div>
+          </div>
+
+        </div>
         </div>
       </main>
     </div>
