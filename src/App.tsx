@@ -4,78 +4,54 @@ import { Search, Loader2 } from 'lucide-react';
 
 function App() {
   return (
-    <div style={{ minHeight: '100vh', padding: '2rem' }}>
+    <div className="min-h-screen p-8">
       {/* Header Section */}
-      <header className="glass-panel" style={{ padding: '2rem', marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 600, marginBottom: '0.5rem' }}>
+      <header className="glass-panel p-8 mb-8">
+        <h1 className="text-2xl font-semibold mb-2">
           Premium Products
         </h1>
-        <p style={{ color: 'var(--text-muted)' }}>
+        <p className="text-[var(--text-muted)]">
           Browse our collection. Handling the flaky API gracefully is part of the challenge.
         </p>
       </header>
 
       {/* Controls Section */}
-      <section style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
-        <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', padding: '0.75rem 1rem', flex: 1, maxWidth: '400px' }}>
-          <Search size={20} color="var(--text-muted)" style={{ marginRight: '0.75rem' }} />
+      <section className="flex gap-4 mb-8">
+        <div className="glass-panel flex items-center px-4 py-3 flex-1 max-w-[400px]">
+          <Search size={20} className="text-[var(--text-muted)] mr-3" />
           <input 
             type="text" 
             placeholder="Search products..." 
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: 'var(--text-main)',
-              outline: 'none',
-              width: '100%',
-              fontSize: '1rem'
-            }}
+            className="bg-transparent border-none outline-none w-full text-base text-[var(--text-main)] placeholder:text-[var(--text-muted)]"
           />
         </div>
         
         <select 
-          className="glass-panel"
-          style={{
-            padding: '0.75rem 1rem',
-            color: 'var(--text-main)',
-            outline: 'none',
-            fontSize: '1rem',
-            cursor: 'pointer',
-            appearance: 'none',
-          }}
+          className="glass-panel px-4 py-3 text-[var(--text-main)] outline-none text-base cursor-pointer appearance-none"
         >
-          <option value="" style={{ background: 'var(--surface)' }}>All Categories</option>
-          <option value="electronics" style={{ background: 'var(--surface)' }}>Electronics</option>
-          <option value="clothing" style={{ background: 'var(--surface)' }}>Clothing</option>
-          <option value="home" style={{ background: 'var(--surface)' }}>Home</option>
-          <option value="outdoors" style={{ background: 'var(--surface)' }}>Outdoors</option>
+          <option value="" className="bg-[var(--surface)]">All Categories</option>
+          <option value="electronics" className="bg-[var(--surface)]">Electronics</option>
+          <option value="clothing" className="bg-[var(--surface)]">Clothing</option>
+          <option value="home" className="bg-[var(--surface)]">Home</option>
+          <option value="outdoors" className="bg-[var(--surface)]">Outdoors</option>
         </select>
       </section>
 
       {/* Main Grid Placeholder */}
       <main>
-        {/* Placeholder state to visually guide candidate */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '4rem',
-          border: '1px dashed var(--border)',
-          borderRadius: '16px',
-        }}>
-           <Loader2 size={40} color="var(--primary)" className="spin" style={{ marginBottom: '1rem', animation: 'spin 2s linear infinite' }} />
-           <style>
-             {`
-               @keyframes spin {
-                 100% { transform: rotate(360deg); }
-               }
-             `}
-           </style>
-           <h2 style={{ marginBottom: '0.5rem' }}>Start Building Your Grid!</h2>
-           <p style={{ color: 'var(--text-muted)', textAlign: 'center', maxWidth: '500px' }}>
-             Use <code>src/services/api.ts</code> to fetch the products. Remember to build pagination and handle the network errors that the API frequently throws!
-           </p>
+        <div className="flex flex-col items-center justify-center p-16 border border-dashed border-[var(--border)] rounded-2xl">
+          <Loader2 
+            size={40} 
+            className="text-[var(--primary)] mb-4 animate-spin"
+          />
+
+          <h2 className="mb-2 text-xl font-medium">
+            Start Building Your Grid!
+          </h2>
+
+          <p className="text-[var(--text-muted)] text-center max-w-[500px]">
+            Use <code>src/services/api.ts</code> to fetch the products. Remember to build pagination and handle the network errors that the API frequently throws!
+          </p>
         </div>
       </main>
     </div>
