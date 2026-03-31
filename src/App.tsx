@@ -1,8 +1,32 @@
-import { Search, Loader2 } from 'lucide-react';
-// import { api } from './services/api'; 
-// Use this to fetch data: api.fetchProducts(...)
+import { Search } from 'lucide-react';
+import { useDebounce } from './hooks/useDebounce';
+import { useProducts } from './hooks/useGetProducts';
+import { useState } from 'react';
+import SkeletonGrid from './components/SkeletonGrid';
+import ProductCard from './components/ProductCard';
 
 function App() {
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('');
+  const [page, setPage] = useState(1);
+
+  const debouncedSearch = useDebounce(search, 2000);
+
+  const {
+    data: productsList,
+    error: productsError,
+    isLoading: isLoadingProducts,
+    isFetching: isFetchingProducts,
+    failureCount: productsFailureCount,
+    refetch: refetchProducts
+  } =
+    useProducts({
+      page,
+      limit: 12,
+      search: debouncedSearch,
+      category,
+    });
+
   return (
     <div className="min-h-screen p-8">
       {/* Header Section */}
@@ -19,61 +43,88 @@ function App() {
       <section className="flex gap-4 mb-8">
         <div className="glass-panel flex items-center px-4 py-3 flex-1 max-w-[400px]">
           <Search size={20} className="text-[var(--text-muted)] mr-3" />
-          <input 
-            type="text" 
-            placeholder="Search products..." 
-            className="bg-transparent border-none outline-none w-full text-base text-[var(--text-main)] placeholder:text-[var(--text-muted)]"
+          <input
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Search products..."
+            className="bg-transparent outline-none w-full"
           />
         </div>
         
-        <select 
-          className="glass-panel px-4 py-3 text-[var(--text-main)] outline-none text-base cursor-pointer appearance-none"
+        <select
+          value={category}
+          onChange={(e) => {
+            setCategory(e.target.value);
+            setPage(1);
+          }}
+          className="glass-panel px-4 py-3"
         >
-          <option value="" className="bg-[var(--surface)]">All Categories</option>
-          <option value="electronics" className="bg-[var(--surface)]">Electronics</option>
-          <option value="clothing" className="bg-[var(--surface)]">Clothing</option>
-          <option value="home" className="bg-[var(--surface)]">Home</option>
-          <option value="outdoors" className="bg-[var(--surface)]">Outdoors</option>
+          <option value="">All</option>
+          <option value="electronics">Electronics</option>
+          <option value="clothing">Clothing</option>
+          <option value="home">Home</option>
+          <option value="outdoors">Outdoors</option>
         </select>
       </section>
 
       {/* Main Grid Placeholder */}
       <main>
-        <div className="flex flex-col items-center justify-center p-16 border border-[var(--border)] rounded-2xl">
-          <Loader2 
-            size={40} 
-            className="text-[var(--primary)] mb-4 animate-spin"
-          />
+        <div className="flex flex-col items-center justify-center p-4 md:p-6 border border-[var(--border)] rounded-2xl">
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-6">
-    
-          {/* Single Product Card */}
-          <div className="bg-white rounded-2xl border border-[var(--border)] overflow-hidden hover:shadow-md transition">
-            
-            {/* Image */}
-            <div className="bg-gray-100 flex items-center justify-center h-48">
-              <img
-                src="https://picsum.photos/seed/1/400/300"
-                alt="Product"
-                className="object-cover h-full"
-              />
+          {/* Retry Message */}
+          {isFetchingProducts && productsFailureCount > 0 && (
+            <p className="text-yellow-500 mb-4">
+              We’re trying our best to show products to you... (Attempt {productsFailureCount}/5)
+            </p>
+          )}
+
+          {/* Final Error */}
+          {productsError && productsFailureCount >= 5 && (
+            <div className="text-red-500 mb-4">
+              Failed to load products. Please try again.
+              <button onClick={() => refetchProducts()} className="ml-4 underline">
+                Retry
+              </button>
             </div>
+          )}
 
-            {/* Content */}
-            <div className="p-4">
-              <p className="text-sm text-gray-500 mb-1">Fabrilife</p>
+          {/* Skeleton (first load OR retrying) */}
+          {(isLoadingProducts || (isFetchingProducts && !productsList)) && <SkeletonGrid />}
 
-              <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 mb-2">
-                Fabrilife Mens Premium Designer Edition T Shirt with Unique Print and Superior Comfort
-              </h3>
-
-              <p className="text-lg font-bold text-[var(--primary)]">
-                ৳ 2,500
-              </p>
-            </div>
+          {/* Products */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-6 w-full">
+            {productsList?.data.map((product) => (
+              <ProductCard product={product} />
+            ))}
           </div>
 
-        </div>
+          {/* Pagination */}
+          <div className="flex items-center justify-center gap-4 mt-8">
+
+            <button
+              disabled={page === 1}
+              onClick={() => setPage((p) => p - 1)}
+              className="px-4 py-2 border rounded"
+            >
+              Prev
+            </button>
+
+            <span className="font-semibold">
+              Page {productsList?.page} / {productsList?.totalPages}
+            </span>
+
+            <button
+              disabled={page === productsList?.totalPages}
+              onClick={() => setPage((p) => p + 1)}
+              className="px-4 py-2 border rounded"
+            >
+              Next
+            </button>
+
+          </div>
         </div>
       </main>
     </div>
