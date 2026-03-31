@@ -1,7 +1,7 @@
 import { Search } from 'lucide-react';
 import { useDebounce } from './hooks/useDebounce';
 import { useProducts } from './hooks/useGetProducts';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import SkeletonGrid from './components/SkeletonGrid';
 import ProductCard from './components/ProductCard';
 
@@ -11,6 +11,8 @@ function App() {
   const [page, setPage] = useState(1);
 
   const debouncedSearch = useDebounce(search, 2000);
+
+  const mainRef = useRef<HTMLDivElement | null>(null);
 
   const {
     data: productsList,
@@ -26,6 +28,16 @@ function App() {
       search: debouncedSearch,
       category,
     });
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+
+    // smooth scroll to product section
+    mainRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  };
 
   return (
     <div className="min-h-screen p-8">
@@ -71,7 +83,7 @@ function App() {
       </section>
 
       {/* Main Grid Placeholder */}
-      <main>
+      <main ref={mainRef}>
         <div className="flex flex-col items-center justify-center p-4 md:p-6 border border-[var(--border)] rounded-2xl">
 
           {/* Retry Message */}
@@ -106,7 +118,7 @@ function App() {
 
             <button
               disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
+              onClick={() => handlePageChange(page - 1)}
               className="px-4 py-2 border rounded"
             >
               Prev
@@ -118,7 +130,7 @@ function App() {
 
             <button
               disabled={page === productsList?.totalPages}
-              onClick={() => setPage((p) => p + 1)}
+              onClick={() => handlePageChange(page + 1)}
               className="px-4 py-2 border rounded"
             >
               Next
